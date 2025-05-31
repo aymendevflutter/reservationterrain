@@ -13,7 +13,6 @@ import 'services/auth_service.dart';
 import 'services/firestore_service.dart';
 import 'services/cloudinary_service.dart';
 import 'services/payment_service.dart';
-import 'services/notification_service.dart';
 import 'providers/auth_provider.dart';
 import 'providers/field_provider.dart';
 import 'providers/booking_provider.dart';
@@ -54,11 +53,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         // Services
+        Provider<SharedPreferences>(create: (_) => prefs),
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<FirestoreService>(create: (_) => FirestoreService()),
         Provider<CloudinaryService>(create: (_) => CloudinaryService()),
         Provider<PaymentService>(create: (_) => PaymentService()),
-        Provider<NotificationService>(create: (_) => NotificationService()),
         Provider<ImgBBService>(create: (_) => ImgBBService()),
 
         // Providers with ChangeNotifier
@@ -72,7 +71,10 @@ class MyApp extends StatelessWidget {
           ),
         ),
         ChangeNotifierProvider(create: (_) => BookingProvider()),
-        ChangeNotifierProvider(create: (_) => LocalizationProvider()),
+        ChangeNotifierProvider(
+          create: (context) =>
+              LocalizationProvider(context.read<SharedPreferences>()),
+        ),
       ],
       child: MaterialApp(
         title: AppConfig.appName,
