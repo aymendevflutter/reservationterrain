@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../services/auth_service.dart';
+import '../../services/imgur_service.dart';
 import '../../models/field_model.dart';
 import '../../widgets/map_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,8 +26,9 @@ class _AddFieldScreenState extends State<AddFieldScreen> {
   final _priceController = TextEditingController();
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _imageUrlController = TextEditingController();
   final _refereePriceController = TextEditingController();
+  final _imgurService = ImgurService();
+  final _imagePicker = ImagePicker();
   List<String> _images = [];
   bool _isLoading = false;
   LatLng? _selectedLocation;
@@ -69,28 +73,8 @@ class _AddFieldScreenState extends State<AddFieldScreen> {
     _priceController.dispose();
     _addressController.dispose();
     _phoneController.dispose();
-    _imageUrlController.dispose();
     _refereePriceController.dispose();
     super.dispose();
-  }
-
-  void _addImageUrl() {
-    final url = _imageUrlController.text.trim();
-    if (url.isNotEmpty &&
-        (url.startsWith('http://') || url.startsWith('https://'))) {
-      setState(() {
-        _images.add(url);
-        _imageUrlController.clear();
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Veuillez entrer une URL valide commençant par http:// ou https://'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
   }
 
   void _configureDay(String day) async {
@@ -173,6 +157,134 @@ class _AddFieldScreenState extends State<AddFieldScreen> {
             ),
           );
         }).toList(),
+      ],
+    );
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+
+      if (image == null) return;
+
+      setState(() => _isLoading = true);
+
+      // Upload to Imgur
+      final imageUrl = await _imgurService.uploadImage(File(image.path));
+
+      setState(() {
+        _images.add(imageUrl);
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Image ajoutée avec succès'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur lors de l\'ajout de l\'image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Widget _buildImageSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Images',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton.icon(
+          onPressed: _isLoading ? null : _pickAndUploadImage,
+          icon: const Icon(Icons.add_photo_alternate),
+          label: const Text('Ajouter une image'),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+        ),
+        if (_images.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _images.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          _images[index],
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 100,
+                              height: 100,
+                              color: Colors.grey[300],
+                              child: const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _images.removeAt(index);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -285,95 +397,7 @@ class _AddFieldScreenState extends State<AddFieldScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Images',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _imageUrlController,
-                      decoration: const InputDecoration(
-                        labelText: 'URL de l\'image',
-                        hintText: 'https://example.com/image.jpg',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _addImageUrl,
-                    child: const Text('Ajouter'),
-                  ),
-                ],
-              ),
-              if (_images.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _images.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                _images[index],
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    width: 100,
-                                    height: 100,
-                                    color: Colors.grey[300],
-                                    child: const Icon(
-                                      Icons.error_outline,
-                                      color: Colors.red,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            Positioned(
-                              top: 4,
-                              right: 4,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _images.removeAt(index);
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+              _buildImageSection(),
               const SizedBox(height: 24),
               const Text(
                 'Sélectionnez l\'emplacement',

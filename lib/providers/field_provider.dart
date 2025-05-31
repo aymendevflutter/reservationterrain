@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/field_model.dart';
 import '../models/filter_model.dart';
 import '../services/firestore_service.dart';
-import 'dart:io';
-import 'package:latlong2/latlong.dart';
+
 
 class FieldProvider extends ChangeNotifier {
   final FirestoreService _firestoreService;
