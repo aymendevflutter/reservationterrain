@@ -53,7 +53,6 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   flutter_spinkit: ^5.2.0
   table_calendar: ^3.0.9
-  flutter_local_notifications: ^16.3.0
 
   # Storage & Media
   cloudinary_public: ^0.21.0

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 class ImgurService {
   static const String _clientId = '438ce23475c348';
@@ -8,8 +9,26 @@ class ImgurService {
 
   Future<String> uploadImage(File imageFile) async {
     try {
-      // Read file as bytes
-      final bytes = await imageFile.readAsBytes();
+      // Verify file exists and is accessible
+      if (!await imageFile.exists()) {
+        throw Exception('Image file does not exist');
+      }
+
+      // Get file size
+      final fileSize = await imageFile.length();
+      if (fileSize > 10 * 1024 * 1024) {
+        // 10MB limit
+        throw Exception('Image file is too large (max 10MB)');
+      }
+
+      // Read file as bytes with error handling
+      List<int> bytes;
+      try {
+        bytes = await imageFile.readAsBytes();
+      } catch (e) {
+        print('Error reading file: $e');
+        throw Exception('Could not read image file');
+      }
 
       // Convert to base64
       final base64Image = base64Encode(bytes);
@@ -26,6 +45,9 @@ class ImgurService {
         },
       );
 
+      print('Response status: ${response.statusCode}'); // Debug print
+      print('Response body: ${response.body}'); // Debug print
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true && data['data'] != null) {
@@ -35,11 +57,10 @@ class ImgurService {
               'Upload failed: ${data['data']['error'] ?? 'Unknown error'}');
         }
       } else {
-        print('Error response: ${response.body}'); // Debug print
         throw Exception('Failed to upload image: ${response.body}');
       }
     } catch (e) {
-      print('Exception: $e'); // Debug print
+      print('Exception in uploadImage: $e'); // Debug print
       throw Exception('Error uploading image: $e');
     }
   }
@@ -55,6 +76,7 @@ class ImgurService {
 
       return uploadedUrls;
     } catch (e) {
+      print('Exception in uploadMultipleImages: $e'); // Debug print
       throw Exception('Error uploading multiple images: $e');
     }
   }

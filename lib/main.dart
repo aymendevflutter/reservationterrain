@@ -36,23 +36,18 @@ void main() async {
   // Initialize SharedPreferences
   final prefs = await SharedPreferences.getInstance();
 
-  // Initialize NotificationService
-  final notificationService = NotificationService();
-  await notificationService.initialize();
-
   runApp(
-  //  DevicePreview(
-   //   enabled: !kReleaseMode, // Only enabled in debug mode
-    //  builder: (context) =>
-       MyApp(prefs: prefs), // Pass prefs through
-    //),
+    DevicePreview(
+      enabled: !kReleaseMode, // Only enabled in debug mode
+      builder: (context) => MyApp(prefs: prefs), // Pass prefs through
+    ),
   );
 }
 
 class MyApp extends StatelessWidget {
   final SharedPreferences prefs;
 
-  const MyApp({super.key, required this.prefs});
+  const MyApp({Key? key, required this.prefs}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +72,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         ChangeNotifierProvider(create: (_) => BookingProvider()),
-        ChangeNotifierProvider(create: (_) => LocalizationProvider(prefs)),
+        ChangeNotifierProvider(create: (_) => LocalizationProvider()),
       ],
       child: MaterialApp(
         title: AppConfig.appName,

@@ -6,7 +6,6 @@ import '../models/payment_model.dart';
 import '../models/user_model.dart';
 import '../models/review_model.dart';
 import '../core/constants/app_constants.dart';
-import '../services/notification_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FirestoreService {
@@ -184,36 +183,12 @@ class FirestoreService {
 
   Future<void> addBooking(BookingModel booking) async {
     try {
-      // Get the field details
-      final fieldDoc =
-          await _firestore.collection('fields').doc(booking.fieldId).get();
-      if (!fieldDoc.exists) {
-        throw Exception('Field not found');
-      }
-
-      // Get the client details
-      final clientDoc =
-          await _firestore.collection('users').doc(booking.userId).get();
-      if (!clientDoc.exists) {
-        throw Exception('Client not found');
-      }
-
-      final client =
-          UserModel.fromMap({'id': clientDoc.id, ...clientDoc.data()!});
-
-      // Add the booking
-      final docRef = _firestore.collection('bookings').doc();
-      await docRef.set({...booking.toMap(), 'id': docRef.id});
-
-      // Send notification to field owner
-      final notificationService = NotificationService();
-      await notificationService.sendNewBookingNotificationToOwner(
-        booking.copyWith(id: docRef.id),
-        client,
-      );
+      await _firestore
+          .collection('bookings')
+          .doc(booking.id)
+          .set(booking.toMap());
     } catch (e) {
-      print('Error adding booking: $e');
-      rethrow;
+      throw Exception('Error adding booking: $e');
     }
   }
 
@@ -551,9 +526,9 @@ class FirestoreService {
           'Votre réservation pour ${booking.fieldName ?? 'le terrain'} le ${booking.startTime.toString().split(' ')[0]} à ${booking.startTime.toString().split(' ')[1].substring(0, 5)} a été confirmée.');
 
       // Optionally: still send push notification
-      final notificationService = NotificationService();
-      await notificationService.sendBookingConfirmationNotification(
-          booking, user);
+      // final notificationService = NotificationService();
+      // await notificationService.sendBookingConfirmationNotification(
+      //     booking, user);
     } catch (e) {
       print('Error confirming booking: $e');
       rethrow;

@@ -3,12 +3,10 @@ import '../models/booking_model.dart';
 import '../models/payment_model.dart';
 import '../services/firestore_service.dart';
 import '../services/payment_service.dart';
-import '../services/notification_service.dart';
 
 class BookingProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
   final PaymentService _paymentService = PaymentService();
-  final NotificationService _notificationService = NotificationService();
 
   List<BookingModel> _userBookings = [];
   List<BookingModel> _fieldBookings = [];
@@ -210,19 +208,6 @@ class BookingProvider with ChangeNotifier {
       // Add to local state
       _userBookings.add(updatedBooking);
 
-      // Schedule notifications
-      await _notificationService.showBookingConfirmation(
-        fieldName: field.name,
-        date: date,
-        timeSlot: timeSlot,
-      );
-
-      await _notificationService.scheduleBookingReminder(
-        fieldName: field.name,
-        date: date,
-        timeSlot: timeSlot,
-      );
-
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -263,25 +248,6 @@ class BookingProvider with ChangeNotifier {
       // Update selected booking if it's the one being modified
       if (_selectedBooking?.id == booking.id) {
         _selectedBooking = updatedBooking;
-      }
-
-      // Send notification based on status
-      if (status == 'confirmed') {
-        await _notificationService.showBookingConfirmed(
-          bookingId: booking.id,
-          fieldName: booking.fieldName ?? 'Terrain',
-          date: booking.startTime,
-          timeSlot:
-              '${booking.startTime.hour}:${booking.startTime.minute.toString().padLeft(2, '0')} - ${booking.endTime.hour}:${booking.endTime.minute.toString().padLeft(2, '0')}',
-        );
-      } else if (status == 'cancelled') {
-        await _notificationService.showBookingCancelled(
-          bookingId: booking.id,
-          fieldName: booking.fieldName ?? 'Terrain',
-          date: booking.startTime,
-          timeSlot:
-              '${booking.startTime.hour}:${booking.startTime.minute.toString().padLeft(2, '0')} - ${booking.endTime.hour}:${booking.endTime.minute.toString().padLeft(2, '0')}',
-        );
       }
 
       _isLoading = false;
