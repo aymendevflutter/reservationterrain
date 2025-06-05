@@ -13,8 +13,8 @@ class AppConfig {
   static const bool isProduction = false;
 
   // Cloudinary
-  static const String cloudinaryCloudName = 'your_cloud_name';
-  static const String cloudinaryUploadPreset = 'your_upload_preset';
+  static const String cloudinaryCloudName = 'dmps9fz5k';
+  static const String cloudinaryUploadPreset = 'reservation';
 
   // ImgBB
   static const String imgbbApiKey = '6fd91f2fade9588ac0998b76dc3ea987';

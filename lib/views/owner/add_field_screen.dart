@@ -4,7 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../services/auth_service.dart';
-import '../../services/imgur_service.dart';
+import '../../services/cloudinary_service.dart';
 import '../../models/field_model.dart';
 import '../../widgets/map_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,7 +27,7 @@ class _AddFieldScreenState extends State<AddFieldScreen> {
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
   final _refereePriceController = TextEditingController();
-  final _imgurService = ImgurService();
+  final _cloudinaryService = CloudinaryService();
   final _imagePicker = ImagePicker();
   List<String> _images = [];
   bool _isLoading = false;
@@ -172,8 +172,8 @@ class _AddFieldScreenState extends State<AddFieldScreen> {
 
       setState(() => _isLoading = true);
 
-      // Upload to Imgur
-      final imageUrl = await _imgurService.uploadImage(File(image.path));
+      // Upload to Cloudinary
+      final imageUrl = await _cloudinaryService.uploadImage(image.path);
 
       setState(() {
         _images.add(imageUrl);
