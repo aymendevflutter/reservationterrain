@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import '../../models/field_model.dart';
+import '../../models/booking_model.dart';
 import '../../providers/booking_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/map_viewer.dart';
@@ -17,6 +17,7 @@ import '../../screens/user/edit_review_screen.dart';
 import '../../models/review_model.dart';
 import '../../providers/field_provider.dart';
 import '../owner/edit_field_screen.dart';
+import 'payment_screen.dart';
 
 class FieldDetailsScreen extends StatefulWidget {
   final FieldModel field;
@@ -211,7 +212,35 @@ class _FieldDetailsScreenState extends State<FieldDetailsScreen> {
 
     if (paymentMethod == null) return;
 
-    // Create booking
+    if (paymentMethod == 'flouci') {
+      // Show fake Mastercard payment page
+      final paymentResult = await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => PaymentScreen(
+            booking: BookingModel(
+              id: '', // temp, will be set in provider
+              userId: context.read<AuthProvider>().user!.id,
+              fieldId: _field.id,
+              userName: authProvider.user?.name ?? '',
+              userPhone: authProvider.user?.phone ?? '',
+              fieldName: _field.name,
+              startTime: startTime,
+              endTime: endTime,
+
+              totalPrice: _totalPrice,
+              status: 'pending',
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+              paymentMethod: 'flouci',
+              withReferee: _withReferee,
+            ),
+          ),
+        ),
+      );
+      if (paymentResult != true) return;
+    }
+
+    // Now create booking (for both cash and flouci, but only after fake payment for flouci)
     if (!mounted) return;
     try {
       setState(() => _isLoading = true);
@@ -225,7 +254,6 @@ class _FieldDetailsScreenState extends State<FieldDetailsScreen> {
             paymentMethod: paymentMethod,
             withReferee: _withReferee,
           );
-
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Booking created successfully')),

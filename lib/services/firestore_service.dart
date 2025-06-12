@@ -350,12 +350,12 @@ class FirestoreService {
           .collection('bookings')
           .where('fieldId', isEqualTo: fieldId)
           .where('status', whereIn: ['confirmed', 'pending']).get();
-      for (var doc in querySnapshot.docs) {
+
+      for (final doc in querySnapshot.docs) {
         final booking = BookingModel.fromMap({'id': doc.id, ...doc.data()});
-        if ((startTime.isBefore(booking.endTime) ||
-                startTime.isAtSameMomentAs(booking.endTime)) &&
-            (endTime.isAfter(booking.startTime) ||
-                endTime.isAtSameMomentAs(booking.startTime))) {
+        // Only block if the exact same time slot is booked
+        if (startTime.isAtSameMomentAs(booking.startTime) &&
+            endTime.isAtSameMomentAs(booking.endTime)) {
           print('Time slot overlaps with existing booking');
           return false;
         }

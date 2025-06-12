@@ -177,11 +177,15 @@ class BookingProvider with ChangeNotifier {
       // Handle payment based on method
       PaymentModel payment;
       if (paymentMethod == 'flouci') {
-        payment = await _paymentService.initiateFlouciPayment(
+        // Fake payment: just create a PaymentModel as if paid
+        payment = PaymentModel(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
           userId: userId,
-          fieldId: fieldId,
           bookingId: booking.id,
           amount: amount,
+          status: 'completed', // or 'pending' if you want to confirm later
+          paymentMethod: 'flouci',
+          createdAt: DateTime.now(),
         );
       } else if (paymentMethod == 'cash') {
         // For cash payments, create a simple payment record

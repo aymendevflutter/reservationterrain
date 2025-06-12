@@ -588,36 +588,16 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
         children: [
           const SizedBox(height: 24),
           Center(
-            child: Stack(
-              children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-                  child: Text(
-                    user.name[0].toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 48,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
+            child: CircleAvatar(
+              radius: 60,
+              backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+              child: Text(
+                user.name[0].toUpperCase(),
+                style: TextStyle(
+                  fontSize: 48,
+                  color: theme.colorScheme.primary,
                 ),
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.edit,
-                      size: 20,
-                      color: theme.colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
           const SizedBox(height: 24),
