@@ -4,11 +4,11 @@ A comprehensive Flutter application for booking and managing sports fields in Tu
 
 ## 📥 Download APK
 
-[![Download APK](https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android)](https://github.com/yourusername/reservationterrain/releases/latest)
+[![Download APK](https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android)](https://github.com/aymendevflutter/reservationterrain/releases/tag/reser/reserve.apk)
 
 Get the latest version of the app:
 - **Latest Release**: [Download APK v1.0.0](https://github.com/yourusername/reservationterrain/releases/latest)
-- **Direct APK Link**: [field_reserve_tn_v1.0.0.apk](https://github.com/yourusername/reservationterrain/releases/download/v1.0.0/field_reserve_tn_v1.0.0.apk)
+- **Direct APK Link**: [field_reserve_tn_v1.0.0.apk](https://github.com/aymendevflutter/reservationterrain/releases/tag/reser/reserve.apk)
 
 > **Note**: Make sure to enable "Install from Unknown Sources" in your Android device settings before installing the APK.
 
@@ -17,7 +17,7 @@ Get the latest version of the app:
 <div align="center">
 
 ### Role Selection Screen
-<img src="screenshots/role_selection.png" alt="Role Selection" width="250"/>
+<img src="screenshots/field1.JPG" alt="Role Selection" width="250"/>
 
 ### Home Screen
 <img src="screenshots/field2.JPG" alt="Home Screen" width="250"/>
