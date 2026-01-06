@@ -20,22 +20,22 @@ Get the latest version of the app:
 <img src="screenshots/role_selection.png" alt="Role Selection" width="250"/>
 
 ### Home Screen
-<img src="screenshots/home_screen.png" alt="Home Screen" width="250"/>
+<img src="screenshots/field2.JPG" alt="Home Screen" width="250"/>
 
 ### Field Details
-<img src="screenshots/field_details.png" alt="Field Details" width="250"/>
+<img src="screenshots/field6.JPG" alt="Field Details" width="250"/>
 
 ### Booking Screen
-<img src="screenshots/booking_screen.png" alt="Booking Screen" width="250"/>
+<img src="screenshots/field3.JPG" alt="Booking Screen" width="250"/>
 
 ### Owner Dashboard
-<img src="screenshots/owner_dashboard.png" alt="Owner Dashboard" width="250"/>
+<img src="screenshots/field9.JPG" alt="Owner Dashboard" width="250"/>
 
 ### Login Screen
-<img src="screenshots/login_screen.png" alt="Login Screen" width="250"/>
+<img src="screenshots/field5.JPG" alt="Login Screen" width="250"/>
 
 ### Profile Screen
-<img src="screenshots/profile_screen.png" alt="Profile Screen" width="250"/>
+<img src="screenshots/image.png" alt="Profile Screen" width="250"/>
 
 </div>
 
