@@ -391,7 +391,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Authors
 
-- **Aymen Fridhi** - *Initial work* - [GitHub](https://github.com/aymenfridhi) - [Email](mailto:aymen.fridhi@example.com)
+- **Aymen Fridhi** - *Initial work* - [GitHub](https://github.com/aymendevflutter) - [Email](mailto:aymenfrid@gmail.com)
 
 ## 🙏 Acknowledgments
 
@@ -401,7 +401,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support
 
-For support, email aymen.fridhi@example.com or open an issue in the repository.
+For support, email aymenfrid@gmail.com or open an issue in the repository.
 
 ## 🆕 Recent Updates
 
