@@ -16,6 +16,9 @@ Get the latest version of the app:
 
 <div align="center">
 
+### Role Selection Screen
+<img src="screenshots/role_selection.png" alt="Role Selection" width="250"/>
+
 ### Home Screen
 <img src="screenshots/home_screen.png" alt="Home Screen" width="250"/>
 
@@ -48,8 +51,10 @@ Field Reserve Tunisia is a mobile application built with Flutter that enables us
 ## ✨ Features
 
 ### For Users/Players
+- 🎯 **Role Selection**: Choose between Client or Propriétaire mode on app launch
 - 🔍 **Browse Fields**: Search and filter sports fields by location, price, features, and availability
 - 👁️ **Guest Mode**: Browse fields without signing in (authentication required only for reservations)
+- 🔙 **Easy Navigation**: Back button for guests to return to role selection
 - 📅 **Make Reservations**: Book fields with date and time selection
 - 💳 **Payment Integration**: Support for Flouci and E-Dinar payment gateways
 - 📋 **Booking Management**: View, track, and manage all your reservations
@@ -59,7 +64,9 @@ Field Reserve Tunisia is a mobile application built with Flutter that enables us
 - 📱 **Responsive Design**: Works on Android, iOS, Web, Windows, macOS, and Linux
 
 ### For Field Owners
+- 🎯 **Role Selection**: Access owner dashboard directly from role selection screen
 - ➕ **Add Fields**: Create detailed field listings with images, features, and pricing
+- 🔐 **Smart Authentication**: Automatic login prompts when trying to add fields as guest
 - 📊 **Manage Bookings**: View and manage all field reservations
 - ⏰ **Weekly Schedule**: Set custom opening hours for each day of the week
 - 📈 **Booking Analytics**: Track bookings and revenue
@@ -67,10 +74,18 @@ Field Reserve Tunisia is a mobile application built with Flutter that enables us
 - 📞 **Contact Management**: Manage field contact information
 
 ### General Features
-- 🔐 **Authentication**: Secure login and registration with Firebase Auth
+- 🔐 **Smart Authentication**: 
+  - Role-based access control (Client/Propriétaire)
+  - Beautiful authentication alerts with modern design
+  - Login and Sign Up options in alerts
+  - Role pre-selection in registration based on context
+  - Continue as Guest option in login screen
 - 🔔 **Push Notifications**: Receive booking confirmations and reminders
 - 💾 **Offline Support**: Cache data for offline browsing
-- 🎨 **Modern UI**: Beautiful Material Design 3 interface with dark mode support
+- 🎨 **Modern UI**: 
+  - Beautiful Material Design 3 interface with dark mode support
+  - Enhanced alert dialogs with gradient backgrounds and icons
+  - Smooth animations and transitions
 - 🔄 **Real-time Updates**: Live updates using Cloud Firestore
 - 📸 **Image Upload**: Upload field images using Cloudinary or ImgBB
 - 🗺️ **Maps Integration**: Google Maps integration for location services
@@ -248,25 +263,65 @@ service cloud.firestore {
 
 ## 📱 Usage
 
-### For Users
+### User Flow
 
-1. **Browse Fields**: Open the app and browse available sports fields
+#### First Time Users / Guests
+
+1. **App Launch**: When you open the app, you'll see a beautiful role selection screen
+2. **Choose Your Mode**:
+   - **Client**: Browse and reserve fields as a player
+   - **Propriétaire**: Manage your sports fields as an owner
+3. **Guest Browsing**: 
+   - Browse fields without signing in
+   - View field details, prices, and features
+   - Use back button to return to role selection
+4. **When Ready to Reserve/Manage**:
+   - Tap "Reserve" or "Add Field"
+   - Beautiful alert dialog appears with options:
+     - **Se connecter** (Login) - If you have an account
+     - **S'inscrire** (Sign Up) - Create new account (role pre-selected)
+     - **Annuler** (Cancel) - Go back
+
+#### Authentication Flow
+
+1. **Login Screen**:
+   - Enter email and password
+   - Or click "Continue as Guest" to browse without account
+   - Link to sign up if you don't have an account
+
+2. **Registration**:
+   - Role is pre-selected based on your entry point
+   - Choose Client or Propriétaire role
+   - Complete registration form
+   - Automatically redirected to appropriate home screen
+
+3. **Smart Alerts**:
+   - Modern, beautiful alert dialogs with icons
+   - Clear messaging about what's required
+   - Easy access to login or signup
+
+### For Users/Players
+
+1. **Browse Fields**: Open the app, select "Client" mode, and browse available sports fields
 2. **Search & Filter**: Use search bar and filters to find specific fields
 3. **View Details**: Tap on a field to see details, features, and pricing
 4. **Make Reservation**: 
    - Select date and time
    - Choose additional services (referee, etc.)
-   - Sign in if you're a guest
+   - If guest: Alert appears → Choose Login or Sign Up
    - Complete payment
 5. **Manage Bookings**: View all your reservations in the Bookings tab
 
 ### For Owners
 
-1. **Sign Up as Owner**: Register with the "owner" role
-2. **Add Field**: Use the "+" button to add a new field
-3. **Set Schedule**: Configure weekly opening hours
-4. **Manage Bookings**: View and confirm/cancel bookings
-5. **Update Field**: Edit field information anytime
+1. **Access Owner Mode**: Select "Propriétaire" from role selection screen
+2. **Authentication**: 
+   - If not logged in: Alert appears with Login/Sign Up options
+   - Role automatically pre-selected as "owner" in signup
+3. **Add Field**: Use the "+" button to add a new field
+4. **Set Schedule**: Configure weekly opening hours
+5. **Manage Bookings**: View and confirm/cancel bookings
+6. **Update Field**: Edit field information anytime
 
 ## 🧪 Testing
 
@@ -320,6 +375,20 @@ Contributions are welcome! Please follow these steps:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## 🆕 Recent Updates
+
+### Version 1.0.0 - Latest Features
+
+- ✨ **Role Selection Screen**: Beautiful entry point to choose between Client and Propriétaire modes
+- 👁️ **Enhanced Guest Mode**: Browse fields without authentication, with easy navigation back to role selection
+- 🎨 **Modern Alert Dialogs**: Redesigned authentication alerts with gradient backgrounds, icons, and better UX
+- 🔐 **Smart Authentication Flow**: 
+  - Login and Sign Up options in all authentication prompts
+  - Role pre-selection in registration based on context
+  - Continue as Guest option in login screen
+- 🔙 **Guest Navigation**: Back button for guests to easily return to role selection
+- 🎯 **Context-Aware Registration**: Role automatically pre-selected when signing up from owner mode
+
 ## 👥 Authors
 
 - **Aymen Fridhi** - *Initial work* - [GitHub](https://github.com/aymenfridhi) - [Email](mailto:aymen.fridhi@example.com)
@@ -334,6 +403,20 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For support, email aymen.fridhi@example.com or open an issue in the repository.
 
+## 🆕 Recent Updates
+
+### Version 1.0.0 - Latest Features
+
+- ✨ **Role Selection Screen**: Beautiful entry point to choose between Client and Propriétaire modes
+- 👁️ **Enhanced Guest Mode**: Browse fields without authentication, with easy navigation back to role selection
+- 🎨 **Modern Alert Dialogs**: Redesigned authentication alerts with gradient backgrounds, icons, and better UX
+- 🔐 **Smart Authentication Flow**: 
+  - Login and Sign Up options in all authentication prompts
+  - Role pre-selection in registration based on context
+  - Continue as Guest option in login screen
+- 🔙 **Guest Navigation**: Back button for guests to easily return to role selection
+- 🎯 **Context-Aware Registration**: Role automatically pre-selected when signing up from owner mode
+
 ## 🔮 Roadmap
 
 - [ ] Real-time chat between users and owners
@@ -344,6 +427,10 @@ For support, email aymen.fridhi@example.com or open an issue in the repository.
 - [ ] Weather integration for outdoor fields
 - [ ] Video previews for fields
 - [ ] Multi-currency support
+- [ ] Remember last selected role preference
+- [ ] Guest booking cart (save selections before login)
+- [ ] Biometric authentication
+- [ ] Dark mode improvements
 
 ---
 
