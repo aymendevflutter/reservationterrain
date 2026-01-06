@@ -19,6 +19,7 @@ import 'providers/booking_provider.dart';
 import 'providers/localization_provider.dart';
 import 'views/splash/splash_screen.dart';
 import 'views/auth/login_screen.dart';
+import 'views/auth/role_selection_screen.dart';
 import 'views/user/user_home_screen.dart';
 import 'views/owner/owner_home_screen.dart';
 import 'services/imgbb_service.dart';
@@ -141,7 +142,8 @@ class AuthWrapper extends StatelessWidget {
           );
         }
 
-        return const LoginScreen();
+        // Show role selection screen for guests
+        return const RoleSelectionScreen();
       },
     );
   }

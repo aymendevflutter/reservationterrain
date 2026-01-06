@@ -5,6 +5,7 @@ import '../../services/firestore_service.dart';
 import '../../models/field_model.dart';
 import '../../models/user_model.dart';
 import '../auth/login_screen.dart';
+import '../auth/role_selection_screen.dart';
 import './field_details_screen.dart';
 import 'bookings_screen.dart';
 import 'profile_screen.dart';
@@ -385,55 +386,78 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.user;
-    if (user == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    final isGuest = user == null;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('FieldReserve Tunisia'),
+        leading: isGuest
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => const RoleSelectionScreen(),
+                    ),
+                  );
+                },
+                tooltip: 'Retour',
+              )
+            : null,
+        automaticallyImplyLeading: !isGuest,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _signOut,
-          ),
+          if (!isGuest)
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: _signOut,
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.login),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
+              },
+              tooltip: 'Se connecter',
+            ),
         ],
       ),
       body: IndexedStack(
         index: _currentIndex,
         children: [
           _buildHomeTab(),
-          const BookingsScreen(),
-          const ProfileScreen(),
+          if (!isGuest) const BookingsScreen() else _buildHomeTab(),
+          if (!isGuest) const ProfileScreen() else _buildHomeTab(),
         ],
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Accueil',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_today_outlined),
-            selectedIcon: Icon(Icons.calendar_today),
-            label: 'Réservations',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-        ],
-      ),
+      bottomNavigationBar: isGuest
+          ? null
+          : NavigationBar(
+              selectedIndex: _currentIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home),
+                  label: 'Accueil',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.calendar_today_outlined),
+                  selectedIcon: Icon(Icons.calendar_today),
+                  label: 'Réservations',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.person_outline),
+                  selectedIcon: Icon(Icons.person),
+                  label: 'Profil',
+                ),
+              ],
+            ),
     );
   }
 }

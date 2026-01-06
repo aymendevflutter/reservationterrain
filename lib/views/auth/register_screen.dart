@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
-import '../../core/theme/app_theme.dart';
 import '../user/user_home_screen.dart';
 import '../owner/owner_home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  final String? initialRole; // 'user' or 'owner'
+  
+  const RegisterScreen({super.key, this.initialRole});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -22,7 +23,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-  String _selectedRole = 'user';
+  late String _selectedRole;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set initial role from widget parameter or default to 'user'
+    _selectedRole = widget.initialRole ?? 'user';
+  }
 
   @override
   void dispose() {

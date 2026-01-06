@@ -5,6 +5,8 @@ import '../../services/firestore_service.dart';
 import '../../models/field_model.dart';
 import '../../models/booking_model.dart';
 import '../../providers/auth_provider.dart';
+import '../auth/login_screen.dart';
+import '../auth/register_screen.dart';
 import 'add_field_screen.dart';
 import 'field_details_screen.dart';
 import 'booking_details_screen.dart';
@@ -70,15 +72,192 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
       ),
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const AddFieldScreen()),
-                );
-              },
+              onPressed: _handleAddField,
               icon: const Icon(Icons.add),
               label: const Text('Ajouter un terrain'),
             )
           : null,
+    );
+  }
+
+  Future<void> _handleAddField() async {
+    // Check if user is authenticated
+    final authService = context.read<AuthService>();
+    final user = authService.currentUser;
+    
+    if (user == null) {
+      // Show alert with Login and Sign Up options
+      final theme = Theme.of(context);
+      final action = await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white,
+                  theme.colorScheme.primary.withOpacity(0.05),
+                ],
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon Container
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.add_business_rounded,
+                    size: 40,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Title
+                Text(
+                  'Connexion requise',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                // Content
+                Text(
+                  'Vous devez vous connecter pour ajouter un terrain.',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Que souhaitez-vous faire?',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                // Buttons
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.of(context).pop('login'),
+                    icon: const Icon(Icons.login_rounded),
+                    label: const Text('Se connecter'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => Navigator.of(context).pop('signup'),
+                    icon: const Icon(Icons.person_add_rounded),
+                    label: const Text('S\'inscrire'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide(
+                        color: theme.colorScheme.primary,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop('cancel'),
+                  child: const Text('Annuler'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      if (!context.mounted) return;
+      
+      if (action == 'login') {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const LoginScreen(),
+          ),
+        );
+      } else if (action == 'signup') {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => RegisterScreen(initialRole: 'owner'),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Check if user is owner
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.reloadUser();
+    
+    if (authProvider.user?.role != 'owner') {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.orange,
+              ),
+              const SizedBox(width: 12),
+              const Text('Accès refusé'),
+            ],
+          ),
+          content: const Text(
+            'Votre compte n\'a pas les permissions de propriétaire. Veuillez vous connecter avec un compte propriétaire.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // User is authenticated and is owner, proceed to add field
+    if (!context.mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const AddFieldScreen()),
     );
   }
 
@@ -164,11 +343,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const AddFieldScreen()),
-                    );
-                  },
+                  onPressed: _handleAddField,
                   icon: const Icon(Icons.add),
                   label: const Text('Ajouter un terrain'),
                 ),
@@ -496,7 +671,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                       _buildInfoRow(
                         icon: Icons.payment,
                         label: 'Paiement',
-                        value: booking.paymentMethod ?? 'Non spécifié',
+                        value: booking.paymentMethod,
                       ),
                     ],
                   ),
@@ -578,7 +753,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
     final user = authProvider.user;
 
     if (user == null) {
-      return const Center(child: Text('User not found'));
+      return const Center(child: Text('Utilisateur non trouvé'));
     }
 
     return SingleChildScrollView(
